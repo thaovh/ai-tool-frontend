@@ -44,9 +44,8 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Please enter a valid email address.",
     }),
-    phoneNumber: z.string().min(1, {
-        message: "Phone number is required.",
-    }),
+    phoneNumber: z.string()
+        .regex(/^\+84[0-9]{9}$/, "Phone number must be in E.164 format (e.g. +84xxxxxxxxx)"),
     role: z.enum(["ADMIN", "USER"]),
     status: z.enum(["ACTIVE", "INACTIVE"]),
 });
@@ -98,7 +97,28 @@ export function EditUserDialog({
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        updateUser(values);
+        // Format phone number to E.164 format
+        let formattedPhoneNumber = values.phoneNumber;
+
+        // Remove any non-digit characters except +
+        formattedPhoneNumber = formattedPhoneNumber.replace(/[^\d+]/g, '');
+
+        // If it starts with 0, replace with +84
+        if (formattedPhoneNumber.startsWith('0')) {
+            formattedPhoneNumber = '+84' + formattedPhoneNumber.substring(1);
+        }
+
+        // If it doesn't have +84 prefix, add it
+        if (!formattedPhoneNumber.startsWith('+84')) {
+            formattedPhoneNumber = '+84' + formattedPhoneNumber;
+        }
+
+        const formattedValues = {
+            ...values,
+            phoneNumber: formattedPhoneNumber
+        };
+
+        updateUser(formattedValues);
     }
 
     return (

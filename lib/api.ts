@@ -362,4 +362,57 @@ export const fineTuneAPI = {
         api.patch(`/api/v1/fine-tune/${id}/check`, { isChecked }),
 };
 
+// User APIs
+export const userAPI = {
+    updateProfile: async (data: {
+        firstName?: string;
+        lastName?: string;
+        email?: string;
+        phoneNumber?: string;
+    }) => {
+        try {
+            console.log('Updating profile with data:', data);
+
+            // Ensure all fields are strings
+            const formattedData = {
+                firstName: data.firstName ? String(data.firstName) : undefined,
+                lastName: data.lastName ? String(data.lastName) : undefined,
+                email: data.email ? String(data.email) : undefined,
+                phoneNumber: data.phoneNumber ? String(data.phoneNumber) : undefined,
+            };
+
+            console.log('Formatted data for API:', formattedData);
+
+            const response = await api.patch('/api/v1/users/profile', formattedData);
+            console.log('Profile update response:', response.data);
+            return response.data;
+        } catch (error: any) {
+            console.error('Error updating profile:', error);
+            console.error('Error response:', error.response?.data);
+            console.error('Error status:', error.response?.status);
+            console.error('Error headers:', error.response?.headers);
+
+            // If we have a specific error message from the server, throw it
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+
+            throw error;
+        }
+    },
+    updatePassword: async (data: {
+        currentPassword: string;
+        newPassword: string;
+        confirmPassword: string;
+    }) => {
+        try {
+            const response = await api.patch('/api/v1/users/profile/password', data);
+            return response.data;
+        } catch (error) {
+            console.error('Error updating password:', error);
+            throw error;
+        }
+    }
+};
+
 export default api; 

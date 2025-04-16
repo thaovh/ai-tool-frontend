@@ -24,7 +24,7 @@ async function testAPI() {
             firstName: 'Test',
             lastName: 'User',
             email: 'test@example.com',
-            phoneNumber: '0123456789'
+            phoneNumber: '+84123456789'
         };
 
         console.log('Sending profile update request with data:', profileData);
@@ -37,7 +37,7 @@ async function testAPI() {
             firstName: 'New',
             lastName: 'User',
             email: 'newuser@example.com',
-            phoneNumber: '0987654321',
+            phoneNumber: '+84987654321',
             password: 'password123',
             role: 'USER',
             status: 'ACTIVE'
@@ -47,7 +47,7 @@ async function testAPI() {
         const createResponse = await api.post('/api/v1/users', userData);
         console.log('User creation response:', createResponse.data);
 
-    } catch (error: any) {
+    } catch (error) {
         console.error('Test failed:', error);
         if (error.response) {
             console.error('Error response:', error.response.data);

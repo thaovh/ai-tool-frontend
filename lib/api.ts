@@ -40,42 +40,25 @@ export const setTokens = (accessToken: string, refreshToken: string) => {
         return;
     }
 
+    // Ensure tokens are strings
+    const accessTokenStr = String(accessToken);
+    const refreshTokenStr = String(refreshToken);
+
     try {
-        // Ensure tokens are strings
-        const accessTokenStr = String(accessToken);
-        const refreshTokenStr = String(refreshToken);
+        // Store tokens in cookies without expiration
+        Cookies.set('access_token', accessTokenStr, { path: '/' });
+        Cookies.set('refresh_token', refreshTokenStr, { path: '/' });
 
-        // Set cookies with secure flags
-        Cookies.set('access_token', accessTokenStr, {
-            path: '/',
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            expires: 1 // 1 day
-        });
-        Cookies.set('refresh_token', refreshTokenStr, {
-            path: '/',
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            expires: 7 // 7 days
-        });
-
-        // Store in localStorage and sessionStorage if available
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('access_token', accessTokenStr);
-            localStorage.setItem('refresh_token', refreshTokenStr);
-            sessionStorage.setItem('access_token', accessTokenStr);
-            sessionStorage.setItem('refresh_token', refreshTokenStr);
-        }
+        // Store tokens in localStorage and sessionStorage
+        localStorage.setItem('access_token', accessTokenStr);
+        localStorage.setItem('refresh_token', refreshTokenStr);
+        sessionStorage.setItem('access_token', accessTokenStr);
+        sessionStorage.setItem('refresh_token', refreshTokenStr);
 
         // Update auth store
         useAuthStore.getState().setToken(accessTokenStr);
     } catch (error) {
         console.error('Error setting tokens:', error);
-        // Log the actual token values for debugging
-        console.log('Token values:', {
-            accessToken: typeof accessToken,
-            refreshToken: typeof refreshToken
-        });
     }
 };
 
